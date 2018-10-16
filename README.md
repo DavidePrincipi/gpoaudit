@@ -44,12 +44,21 @@ Here we create and configure the GPO and copy the syslog client scripts into it.
 
 2.  From another shell, synchronize the GPO folder in this git repository with the GPO folder
 
-        [root@nsrv ~]# rsync -ai GPO/ /var/lib/machines/nsdc/var/lib/samba/sysvol/ad.example.com/Policies/\{FB3DF807-0C09-45F5-926D-B6479A5EC9D3\}/
-        .d..tpog... ./
-        .d..tpog... User/
+        [root@nsrv ~]# rsync -ai --exclude=.gitignore --no-owner --no-group GPO/ /var/lib/machines/nsdc/var/lib/samba/sysvol/ad.example.com/Policies/\{FB3DF807-0C09-45F5-926D-B6479A5EC9D3\}/
+        cd+++++++++ ./
+        >f+++++++++ GPT.INI
+        cd+++++++++ Machine/
+        cd+++++++++ User/
         cd+++++++++ User/Scripts/
         >f+++++++++ User/Scripts/psscripts.ini
+        >f+++++++++ User/Scripts/scripts.ini
         >f+++++++++ User/Scripts/syslogger.ps1
+        cd+++++++++ User/Scripts/Logoff/
+        cd+++++++++ User/Scripts/Logon/
+        [root@nsrv ~]# samba-tool ntacl sysvolreset && echo OK
+        OK
+        [root@nsrv ~]# samba-tool ntacl sysvolcheck && echo OK
+        OK
 
 3.  Go back to nsdc shell and link the GPO to the domain container
 
