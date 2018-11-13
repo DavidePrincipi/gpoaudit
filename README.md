@@ -55,12 +55,27 @@ Here we create and configure the GPO and copy the syslog client scripts into it.
         >f+++++++++ User/Scripts/syslogger.ps1
         cd+++++++++ User/Scripts/Logoff/
         cd+++++++++ User/Scripts/Logon/
-        [root@nsrv ~]# samba-tool ntacl sysvolreset && echo OK
-        OK
-        [root@nsrv ~]# samba-tool ntacl sysvolcheck && echo OK
-        OK
 
 3.  Go back to nsdc shell and link the GPO to the domain container
+
+        bash-4.2# samba-tool ntacl sysvolreset && echo OK
+        OK
+        bash-4.2# ldbmodify -H /var/lib/samba/private/sam.ldb <<EOF
+        dn: CN={FB3DF807-0C09-45F5-926D-B6479A5EC9D3},CN=Policies,CN=System,DC=ad,DC=example,DC=com
+        changetype: modify
+        replace: versionNumber
+        versionNumber: 65536
+        -
+        replace: gPCUserExtensionNames
+        gPCUserExtensionNames: [{42B5FAAE-6536-11D2-AE5A-0000F87571E3}{40B66650-4972-1
+         1D1-A7CA-0000F87571E3}]
+        EOF
+
+    Note that `GPT.INI` contains the `versionNumber` in hexadecimal base,
+    whilst `gPCUserExtensionNames` actually enables the logon/logff scripts
+    section.
+
+    Finally link the GPO to the whole domain container:
 
         bash-4.2# samba-tool gpo setlink DC=ad,DC=example,DC=com {FB3DF807-0C09-45F5-926D-B6479A5EC9D3} -U nethesis --password TK04weo.
         Added/Updated GPO link
@@ -73,3 +88,9 @@ Here we create and configure the GPO and copy the syslog client scripts into it.
             Name    : Default Domain Policy
             Options : NONE
 
+## See also
+
+About `gPCUserExtensionNames`:
+
+- http://evilgpo.blogspot.com/2012/11/guids-guids-guids-2.html
+- https://deployhappiness.com/cse-processing-order-know-lsdou-learn-this-too/
