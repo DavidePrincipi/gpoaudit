@@ -34,7 +34,7 @@ messages from the domain workstations.
 
 Here we create and configure the GPO and copy the syslog client scripts into it.
 
-1.  Get a shell on nsdc and create an empty GPO container
+1.  Get a shell on nsdc and create an empty GPO container, providing a Domain Admins member credentials
 
         [root@nsrv ~]# systemd-run -M nsdc -t bash
         Running as unit run-7046.service.
